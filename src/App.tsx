@@ -1,10 +1,14 @@
+import Header from "./components/Header";
 import "./style/index.scss";
 import { Outlet } from "react-router-dom";
 
 function App() {
   return (
     <>
-      <Outlet />
+      <Header />
+      <main>
+        <Outlet />
+      </main>
     </>
   );
 }

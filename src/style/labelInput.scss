@@ -1,0 +1,20 @@
+.form-group {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  height: 35px;
+  label {
+    width: 30%;
+    text-align: right;
+  }
+  input {
+    border-radius: 3px;
+    border: 1px solid black;
+    width: 40%;
+    padding: 5px 8px;
+    &:focus {
+      outline: none;
+      border-width: 2px;
+    }
+  }
+}
