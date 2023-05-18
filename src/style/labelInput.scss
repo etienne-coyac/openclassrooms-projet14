@@ -3,18 +3,37 @@
   align-items: center;
   gap: 15px;
   height: 35px;
+  position: relative;
   label {
     width: 30%;
     text-align: right;
   }
-  input {
+  .form-input {
     border-radius: 3px;
     border: 1px solid black;
-    width: 40%;
+    width: 50%;
     padding: 5px 8px;
+    box-sizing: border-box;
     &:focus {
       outline: none;
       border-width: 2px;
+    }
+  }
+  .form-input-error-tip {
+    position: absolute;
+    font-size: 0.8rem;
+    color: red;
+    top: 100%;
+    width: 100%;
+    text-align: center;
+    margin: -7px 0 0 0;
+  }
+  .form-dropdown {
+    box-sizing: border-box;
+    width: 50%;
+    button {
+      height: 27px;
+      width: 100%;
     }
   }
 }

@@ -1,5 +1,15 @@
-.employee-form {
+.employee-form,
+.address-fieldset {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+.address-fieldset {
+  padding: 0 0 10px 0;
+  margin: -2px;
+  text-align: center;
+}
+.form-submit {
+  width: 100px;
+  align-self: center;
 }
