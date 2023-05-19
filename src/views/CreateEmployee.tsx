@@ -5,10 +5,14 @@ import Dropdown from "../components/Dropdown";
 import { Option } from "../types/dropdown.types";
 import { departments, getPrettyDepartmentName } from "../utils/department.utils";
 import { states } from "../utils/state.utils";
-import { Employee, ErrorType } from "../types/employee.types";
+import { ErrorType } from "../types/employee.types";
+import { useDispatch } from "react-redux";
+import { addEmployee } from "../app/features/employeeSlice";
 import { employeeSchema } from "../types/schemas/employee.schemas";
 
 function CreateEmployee() {
+  const dispatch = useDispatch();
+
   const [firstname, setFirstName] = useState<string>("");
   const [lastname, setLastName] = useState<string>("");
   const [birthdate, setBirthDate] = useState<string>("");
@@ -62,7 +66,7 @@ function CreateEmployee() {
         },
         department: department?.value
       };
-      console.log(employee, employeeSchema.parse(employee));
+      dispatch(addEmployee(employeeSchema.parse(employee)));
     } catch (e: any) {
       if (e.name === "ZodError") {
         setErrors(
@@ -74,7 +78,6 @@ function CreateEmployee() {
       }
     }
   };
-  console.log(errors);
 
   return (
     <form className="employee-form" onSubmit={handleSubmit}>
