@@ -1,4 +1,4 @@
-import { Box, Checkbox, TableCell, TableHead, TableRow, TableSortLabel } from "@mui/material";
+import { TableCell, TableHead, TableRow, TableSortLabel } from "@mui/material";
 import { Employee } from "../types/employee.types";
 
 interface HeadCell {
@@ -20,16 +20,13 @@ const headCells: HeadCell[] = [
 type Order = "asc" | "desc";
 
 interface EnhancedTableProps {
-  numSelected: number;
   onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Employee) => void;
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   order: Order;
   orderBy: string;
-  rowCount: number;
 }
 
 export default function EnhancedTableHead(props: EnhancedTableProps) {
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+  const { order, orderBy, onRequestSort } = props;
   const createSortHandler = (property: keyof Employee) => (event: React.MouseEvent<unknown>) => {
     onRequestSort(event, property);
   };

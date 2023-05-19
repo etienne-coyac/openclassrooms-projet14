@@ -1,11 +1,7 @@
-import { useMemo, useState } from "react";
-import LabelInput from "../components/LabelInput";
+import { useState } from "react";
 import "../style/createEmployee.scss";
-import Dropdown from "../components/Dropdown";
-import { Option } from "../types/dropdown.types";
 import { departments, getPrettyDepartmentName } from "../utils/department.utils";
 import { states } from "../utils/state.utils";
-import { ErrorType } from "../types/employee.types";
 import { useDispatch } from "react-redux";
 import { addEmployee } from "../app/features/employeeSlice";
 import { employeeSchema } from "../types/schemas/employee.schemas";
@@ -22,9 +18,8 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import { set } from "zod";
-import { DesktopDatePicker } from "@mui/x-date-pickers";
 import { Dayjs } from "dayjs";
+import { DesktopDatePicker } from "@mui/x-date-pickers";
 
 const style = {
   position: "absolute",
@@ -77,7 +72,7 @@ function CreateEmployee() {
   };
   const [errors, setErrors] = useState<FormErrorsType>(initialErrors);
 
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(true);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -96,8 +91,10 @@ function CreateEmployee() {
       dispatch(addEmployee(employeeSchema.parse(employee)));
 
       setOpen(true);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       if (e.name === "ZodError") {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const zodErrors = e.issues.reduce((acc: FormErrorsType, issue: any) => {
           const field = issue.path.at(-1) as keyof FormErrorsType;
           acc[field] = issue.message;
@@ -142,7 +139,6 @@ function CreateEmployee() {
                 onChange={(newValue) => {
                   setBirthDate(newValue);
                 }}
-                renderInput={(params) => <TextField {...params} />} // mui bug => ignore
               />
               <FormHelperText>{errors.birthdate}</FormHelperText>
             </FormControl>
@@ -153,7 +149,6 @@ function CreateEmployee() {
                 onChange={(newValue) => {
                   setStartDate(newValue);
                 }}
-                renderInput={(params) => <TextField {...params} />} // mui bug => ignore
               />
               <FormHelperText>{errors.startdate}</FormHelperText>
             </FormControl>
