@@ -35,9 +35,9 @@ function LabelInput(props: LabelInputProps) {
             placeholder={placeholder}
             onChange={(e) => onChange(e.target.value)}
           />
-          {error && <p className="form-input-error-tip">{error.message}</p>}
         </>
       )}
+      {error && <p className="form-input-error-tip">{error.message}</p>}
     </div>
   );
 }

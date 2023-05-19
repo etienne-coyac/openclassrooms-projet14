@@ -3,10 +3,7 @@ import LabelInput from "../components/LabelInput";
 import "../style/createEmployee.scss";
 import Dropdown from "../components/Dropdown";
 import { Option } from "../types/dropdown.types";
-import {
-  departments,
-  getPrettyDepartmentName,
-} from "../utils/department.utils";
+import { departments, getPrettyDepartmentName } from "../utils/department.utils";
 import { states } from "../utils/state.utils";
 import { Employee, ErrorType } from "../types/employee.types";
 import { employeeSchema } from "../types/schemas/employee.schemas";
@@ -28,7 +25,7 @@ function CreateEmployee() {
     return departments.map((department) => {
       return {
         label: getPrettyDepartmentName(department),
-        value: department,
+        value: department
       };
     });
   }, []);
@@ -37,7 +34,7 @@ function CreateEmployee() {
     return states.map((state) => {
       return {
         label: state.name,
-        value: state.abbreviation,
+        value: state.abbreviation
       };
     });
   }, []);
@@ -52,7 +49,7 @@ function CreateEmployee() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const employee: Employee = {
+      const employee = {
         firstname,
         lastname,
         birthdate,
@@ -60,10 +57,10 @@ function CreateEmployee() {
         address: {
           street,
           city,
-          state: state?.value || "",
-          zipcode: zip,
+          state: state?.value,
+          zipcode: zip
         },
-        department: department?.value || "",
+        department: department?.value
       };
       console.log(employee, employeeSchema.parse(employee));
     } catch (e: any) {
@@ -71,7 +68,7 @@ function CreateEmployee() {
         setErrors(
           e.issues.map((issue: any) => ({
             field: issue.path.at(-1),
-            message: issue.message,
+            message: issue.message
           }))
         );
       }
@@ -139,13 +136,9 @@ function CreateEmployee() {
         />
         <LabelInput
           name="State"
+          error={errors.find((error) => error.field === "state")}
           customInput={
-            <Dropdown
-              value={state}
-              options={statesOptions}
-              onChange={handleStateChange}
-              className="form-dropdown"
-            />
+            <Dropdown value={state} options={statesOptions} onChange={handleStateChange} className="form-dropdown" />
           }
         />
         <LabelInput
@@ -160,6 +153,7 @@ function CreateEmployee() {
       </fieldset>
       <LabelInput
         name="Department"
+        error={errors.find((error) => error.field === "department")}
         customInput={
           <Dropdown
             value={department}

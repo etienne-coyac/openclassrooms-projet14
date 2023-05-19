@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Option } from "../types/dropdown.types";
 import "../style/dropdown.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -25,15 +25,27 @@ function Dropdown<T>(props: DropdownProps<T>) {
     setOpen(!open);
   };
 
+  const ref = useRef<HTMLDivElement>(null);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (ref.current && !ref.current.contains(event.target as Node)) {
+      setOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside, true);
+    return () => {
+      document.removeEventListener("click", handleClickOutside, true);
+    };
+  }, []);
+
   return (
-    <div className={`${className} ${error ? "error" : ""} dropdown-default`}>
+    <div className={`${className} ${error ? "error" : ""} dropdown-default`} ref={ref}>
       <button type="button" onClick={handleOpenDropdown}>
         <span className="dropdown-value">{value?.label}</span>
         <span>{value === null ? title : ""}</span>
-        <FontAwesomeIcon
-          className={`dropdown-icon ${open ? "open" : ""}`}
-          icon={faChevronDown}
-        />
+        <FontAwesomeIcon className={`dropdown-icon ${open ? "open" : ""}`} icon={faChevronDown} />
       </button>
       <ul className={`dropdown-list ${open ? "open" : ""}`}>
         {options.map((option, index) => {
