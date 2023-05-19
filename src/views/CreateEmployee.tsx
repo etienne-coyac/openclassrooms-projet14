@@ -87,13 +87,11 @@ function CreateEmployee() {
         lastname,
         birthdate: birthdate?.toDate(),
         startdate: startdate?.toDate(),
-        address: {
-          street,
-          city,
-          state,
-          zip
-        },
-        department: department
+        street,
+        city,
+        state,
+        zip,
+        department
       };
       dispatch(addEmployee(employeeSchema.parse(employee)));
 
