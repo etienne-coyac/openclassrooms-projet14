@@ -1,23 +1,19 @@
 import * as z from "zod";
 import { states } from "../../utils/state.utils";
-
-type StateProp = (typeof states)[number]["abbreviation"];
-const stateEnum: [StateProp, ...StateProp[]] = [
-  states[0].abbreviation,
-  ...states.slice(1).map((state) => state.abbreviation)
-];
-console.log(stateEnum);
+import { departments } from "../../utils/department.utils";
 
 export const employeeSchema = z.object({
-  firstname: z.string().min(2).max(50),
-  lastname: z.string().min(2).max(50),
-  birthdate: z.string(), //z.date(),
-  startdate: z.string(), // z.date(),
+  firstname: z.string().min(2, { message: "Firstname must be at least 2 caracters" }).max(50),
+  lastname: z.string().min(2, { message: "Lastname must be at least 2 caracters" }).max(50),
+  birthdate: z.date(),
+  startdate: z.date(),
   address: z.object({
-    street: z.string().min(2).max(50),
-    city: z.string().min(2).max(50),
-    state: z.string(),
-    zipcode: z.string().regex(/\d{5}/)
+    street: z.string().min(2, { message: "Street must be at least 2 caracters" }).max(50),
+    city: z.string().min(2, { message: "City must be at least 2 caracters" }).max(50),
+    state: z.string().refine((val) => states.some((s) => s.abbreviation === val), { message: "State must be filled" }),
+    zip: z.string().regex(/^\d{5}$/, { message: "Zip must be a valid zip code (5 digits)" })
   }),
-  department: z.string()
+  department: z
+    .string()
+    .refine((val) => departments.map((d) => d.toString()).includes(val), { message: "Department must be filled" })
 });

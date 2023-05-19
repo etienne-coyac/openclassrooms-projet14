@@ -1,15 +1,21 @@
-.employee-form,
-.address-fieldset {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-.address-fieldset {
-  padding: 0 0 10px 0;
-  margin: -2px;
-  text-align: center;
-}
-.form-submit {
-  width: 100px;
-  align-self: center;
+.employee-form {
+  .grid-form {
+    margin-bottom: 15px;
+    .form-submit {
+      width: 100px;
+      align-self: center;
+    }
+    .form-group {
+      min-height: 85px;
+    }
+    .address-fieldset {
+      padding: 10px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .employee-data {
+      display: flex;
+      flex-direction: column;
+    }
+  }
 }

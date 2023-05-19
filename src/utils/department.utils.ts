@@ -1,12 +1,6 @@
 import { Department } from "../types/employee.types";
 
-export const departments = [
-  "sales",
-  "marketing",
-  "engineering",
-  "human_resources",
-  "legal",
-] as const;
+export const departments = ["sales", "marketing", "engineering", "human_resources", "legal"] as const;
 
 export const getPrettyDepartmentName = (department: Department) => {
   switch (department) {
