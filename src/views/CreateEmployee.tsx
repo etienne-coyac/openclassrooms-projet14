@@ -5,22 +5,21 @@ import { states } from "../utils/state.utils";
 import { useDispatch } from "react-redux";
 import { addEmployee } from "../app/features/employeeSlice";
 import { employeeSchema } from "../types/schemas/employee.schemas";
-import {
-  Box,
-  Button,
-  FormControl,
-  FormHelperText,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Modal,
-  Select,
-  TextField,
-  Typography
-} from "@mui/material";
+
+//path import for @mui/material
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import FormControl from "@mui/material/FormControl";
+import FormHelperText from "@mui/material/FormHelperText";
+import Grid from "@mui/material/Grid";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import { Dayjs } from "dayjs";
 import { DesktopDatePicker } from "@mui/x-date-pickers";
-
+import { Modal } from "openclassrooms-npm-etienne-coyac";
 const style = {
   position: "absolute",
   top: "50%",
@@ -72,7 +71,20 @@ function CreateEmployee() {
   };
   const [errors, setErrors] = useState<FormErrorsType>(initialErrors);
 
-  const [open, setOpen] = useState<boolean>(true);
+  const [open, setOpen] = useState<boolean>(false);
+
+  const resetEployeeForm = () => {
+    setFirstName("");
+    setLastName("");
+    setBirthDate(null);
+    setStartDate(null);
+    setStreet("");
+    setCity("");
+    setState("");
+    setDepartment("");
+    setZip("");
+    setErrors(initialErrors);
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -89,7 +101,7 @@ function CreateEmployee() {
         department
       };
       dispatch(addEmployee(employeeSchema.parse(employee)));
-
+      resetEployeeForm();
       setOpen(true);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -265,12 +277,7 @@ function CreateEmployee() {
           Save
         </Button>
       </form>
-      <Modal
-        open={open}
-        onClose={() => setOpen(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+      <Modal open={open} onClose={() => setOpen(false)}>
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
             New employee

@@ -1,16 +1,15 @@
 import { useMemo, useState } from "react";
 import { Employee } from "../types/employee.types";
-import {
-  Box,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  TextField
-} from "@mui/material";
+
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TablePagination from "@mui/material/TablePagination";
+import TableRow from "@mui/material/TableRow";
+import TextField from "@mui/material/TextField";
 import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import EnhancedTableHead from "./EnhancedTableHead";
@@ -87,7 +86,7 @@ function EmployeeTable() {
           fullWidth
           value={stringFilter}
           onChange={(e) => setStringFilter(e.target.value)}
-          error={visibleRows.length === 0}
+          error={visibleRows.length === 0 && employees.length !== 0}
         />
 
         <TableContainer>
@@ -103,8 +102,8 @@ function EmployeeTable() {
                       {row.firstname}
                     </TableCell>
                     <TableCell align="left">{row.lastname}</TableCell>
-                    <TableCell align="left">{row.birthdate.toLocaleDateString("en")}</TableCell>
-                    <TableCell align="left">{row.startdate.toLocaleDateString("en")}</TableCell>
+                    <TableCell align="left">{row.birthdate}</TableCell>
+                    <TableCell align="left">{row.startdate}</TableCell>
                     <TableCell align="left">{row.street}</TableCell>
                     <TableCell align="left">{row.city}</TableCell>
                     <TableCell align="left">{row.state}</TableCell>

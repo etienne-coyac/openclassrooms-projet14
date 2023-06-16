@@ -5,8 +5,8 @@ import { departments } from "../../utils/department.utils";
 export const employeeSchema = z.object({
   firstname: z.string().min(2, { message: "Firstname must be at least 2 caracters" }).max(50),
   lastname: z.string().min(2, { message: "Lastname must be at least 2 caracters" }).max(50),
-  birthdate: z.date(),
-  startdate: z.date(),
+  birthdate: z.date().transform((val) => val.toLocaleDateString("fr")),
+  startdate: z.date().transform((val) => val.toLocaleDateString("fr")),
 
   street: z.string().min(2, { message: "Street must be at least 2 caracters" }).max(50),
   city: z.string().min(2, { message: "City must be at least 2 caracters" }).max(50),
