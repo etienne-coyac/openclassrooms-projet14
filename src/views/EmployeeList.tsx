@@ -1,5 +1,7 @@
+import EmployeeTable from "../components/EmployeeTable";
+
 function EmployeeList() {
-  return <>EmployeeList</>;
+  return <EmployeeTable />;
 }
 
 export default EmployeeList;

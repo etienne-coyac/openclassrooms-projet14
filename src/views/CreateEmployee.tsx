@@ -1,53 +1,89 @@
-import { useMemo, useState } from "react";
-import LabelInput from "../components/LabelInput";
+import { useState } from "react";
 import "../style/createEmployee.scss";
-import Dropdown from "../components/Dropdown";
-import { Option } from "../types/dropdown.types";
 import { departments, getPrettyDepartmentName } from "../utils/department.utils";
 import { states } from "../utils/state.utils";
-import { ErrorType } from "../types/employee.types";
 import { useDispatch } from "react-redux";
 import { addEmployee } from "../app/features/employeeSlice";
 import { employeeSchema } from "../types/schemas/employee.schemas";
+
+//path import for @mui/material
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import FormControl from "@mui/material/FormControl";
+import FormHelperText from "@mui/material/FormHelperText";
+import Grid from "@mui/material/Grid";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import { Dayjs } from "dayjs";
+import { DesktopDatePicker } from "@mui/x-date-pickers";
+import { Modal } from "openclassrooms-npm-etienne-coyac";
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4
+};
+
+interface FormErrorsType {
+  firstname: boolean | string;
+  lastname: boolean | string;
+  birthdate: boolean | string;
+  startdate: boolean | string;
+  street: boolean | string;
+  city: boolean | string;
+  state: boolean | string;
+  department: boolean | string;
+  zip: boolean | string;
+}
 
 function CreateEmployee() {
   const dispatch = useDispatch();
 
   const [firstname, setFirstName] = useState<string>("");
   const [lastname, setLastName] = useState<string>("");
-  const [birthdate, setBirthDate] = useState<string>("");
-  const [startdate, setStartDate] = useState<string>("");
+  const [birthdate, setBirthDate] = useState<Dayjs | null>(null);
+  const [startdate, setStartDate] = useState<Dayjs | null>(null);
   const [street, setStreet] = useState<string>("");
   const [city, setCity] = useState<string>("");
-  const [state, setState] = useState<Option<string> | null>(null);
-  const [department, setDepartment] = useState<Option<string> | null>(null);
+  const [state, setState] = useState<string>("");
+  const [department, setDepartment] = useState<string>("");
   const [zip, setZip] = useState<string>("");
 
-  const [errors, setErrors] = useState<ErrorType[]>([]);
-
-  const departmentOptions = useMemo(() => {
-    return departments.map((department) => {
-      return {
-        label: getPrettyDepartmentName(department),
-        value: department
-      };
-    });
-  }, []);
-
-  const statesOptions = useMemo(() => {
-    return states.map((state) => {
-      return {
-        label: state.name,
-        value: state.abbreviation
-      };
-    });
-  }, []);
-
-  const handleDepartmentChange = (value: Option<string>) => {
-    setDepartment(value);
+  // const [errors, setErrors] = useState<ErrorType[]>([]);
+  const initialErrors: FormErrorsType = {
+    firstname: false,
+    lastname: false,
+    birthdate: false,
+    startdate: false,
+    street: false,
+    city: false,
+    state: false,
+    department: false,
+    zip: false
   };
-  const handleStateChange = (value: Option<string>) => {
-    setState(value);
+  const [errors, setErrors] = useState<FormErrorsType>(initialErrors);
+
+  const [open, setOpen] = useState<boolean>(false);
+
+  const resetEployeeForm = () => {
+    setFirstName("");
+    setLastName("");
+    setBirthDate(null);
+    setStartDate(null);
+    setStreet("");
+    setCity("");
+    setState("");
+    setDepartment("");
+    setZip("");
+    setErrors(initialErrors);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -56,121 +92,202 @@ function CreateEmployee() {
       const employee = {
         firstname,
         lastname,
-        birthdate,
-        startdate,
-        address: {
-          street,
-          city,
-          state: state?.value,
-          zipcode: zip
-        },
-        department: department?.value
+        birthdate: birthdate?.toDate(),
+        startdate: startdate?.toDate(),
+        street,
+        city,
+        state,
+        zip,
+        department
       };
       dispatch(addEmployee(employeeSchema.parse(employee)));
+      resetEployeeForm();
+      setOpen(true);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       if (e.name === "ZodError") {
-        setErrors(
-          e.issues.map((issue: any) => ({
-            field: issue.path.at(-1),
-            message: issue.message
-          }))
-        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const zodErrors = e.issues.reduce((acc: FormErrorsType, issue: any) => {
+          const field = issue.path.at(-1) as keyof FormErrorsType;
+          acc[field] = issue.message;
+          return acc;
+        }, initialErrors);
+        setErrors({ ...zodErrors });
       }
     }
   };
 
   return (
-    <form className="employee-form" onSubmit={handleSubmit}>
-      <LabelInput
-        value={firstname}
-        name="Firstname"
-        placeholder="Enter your firstname"
-        onChange={(value) => {
-          setFirstName(value);
-        }}
-        error={errors.find((error) => error.field === "firstname")}
-      />
-      <LabelInput
-        value={lastname}
-        name="Lastname"
-        onChange={(value) => {
-          setLastName(value);
-        }}
-        error={errors.find((error) => error.field === "lastname")}
-        placeholder="Enter your lastname"
-      />
-      <LabelInput
-        value={birthdate}
-        name="Birthdate"
-        onChange={(value) => {
-          setBirthDate(value);
-        }}
-        error={errors.find((error) => error.field === "birthdate")}
-        placeholder="Enter your birthdate"
-      />
-      <LabelInput
-        value={startdate}
-        name="Start date"
-        onChange={(value) => {
-          setStartDate(value);
-        }}
-        error={errors.find((error) => error.field === "startdate")}
-        placeholder="Enter your start date"
-      />
-      <fieldset className="address-fieldset">
-        <legend>Address</legend>
-        <LabelInput
-          value={street}
-          name="Street"
-          onChange={(value) => {
-            setStreet(value);
-          }}
-          error={errors.find((error) => error.field === "street")}
-          placeholder="Enter your street"
-        />
-        <LabelInput
-          value={city}
-          name="City"
-          onChange={(value) => {
-            setCity(value);
-          }}
-          error={errors.find((error) => error.field === "city")}
-          placeholder="Enter your city"
-        />
-        <LabelInput
-          name="State"
-          error={errors.find((error) => error.field === "state")}
-          customInput={
-            <Dropdown value={state} options={statesOptions} onChange={handleStateChange} className="form-dropdown" />
-          }
-        />
-        <LabelInput
-          value={zip}
-          placeholder="Enter your zip code"
-          name="Zip code"
-          onChange={(value) => {
-            setZip(value);
-          }}
-          error={errors.find((error) => error.field === "zipcode")}
-        />
-      </fieldset>
-      <LabelInput
-        name="Department"
-        error={errors.find((error) => error.field === "department")}
-        customInput={
-          <Dropdown
-            value={department}
-            options={departmentOptions}
-            onChange={handleDepartmentChange}
-            className="form-dropdown"
-          />
-        }
-      />
+    <>
+      <form className="employee-form" onSubmit={handleSubmit}>
+        <Grid container spacing={5} className="grid-form">
+          <Grid item xs={12} sm={6} className="employee-data">
+            <Typography variant="h5">Personal information</Typography>
 
-      <button type="submit" className="form-submit">
-        Save
-      </button>
-    </form>
+            <FormControl error={errors.firstname !== false} className="form-group">
+              <TextField
+                label="Firstname"
+                onChange={(e) => {
+                  setFirstName(e.target.value);
+                }}
+                error={errors.firstname !== false}
+              />
+              <FormHelperText>{errors.firstname}</FormHelperText>
+            </FormControl>
+            <FormControl error={errors.lastname !== false} className="form-group">
+              <TextField
+                label="Lastname"
+                onChange={(e) => {
+                  setLastName(e.target.value);
+                }}
+                error={errors.lastname !== false}
+              />
+              <FormHelperText>{errors.lastname}</FormHelperText>
+            </FormControl>
+            <FormControl error={errors.birthdate !== false} className="form-group">
+              <DesktopDatePicker
+                label="Birthdate"
+                value={birthdate}
+                onChange={(newValue) => {
+                  setBirthDate(newValue);
+                }}
+              />
+              <FormHelperText>{errors.birthdate}</FormHelperText>
+            </FormControl>
+            <FormControl error={errors.startdate !== false} className="form-group">
+              <DesktopDatePicker
+                label="Start date"
+                value={startdate}
+                onChange={(newValue) => {
+                  setStartDate(newValue);
+                }}
+              />
+              <FormHelperText>{errors.startdate}</FormHelperText>
+            </FormControl>
+            <FormControl error={errors.department !== false} className="form-group">
+              <InputLabel id="select-department">Department</InputLabel>
+              <Select
+                label="Department"
+                autoWidth
+                value={department}
+                onChange={(e) => {
+                  setDepartment(e.target.value);
+                }}
+                MenuProps={{
+                  anchorOrigin: {
+                    vertical: "bottom",
+                    horizontal: "left"
+                  },
+                  transformOrigin: {
+                    vertical: "top",
+                    horizontal: "left"
+                  },
+                  PaperProps: {
+                    style: {
+                      maxHeight: 300
+                    }
+                  }
+                }}
+              >
+                <MenuItem value=""></MenuItem>
+                {departments.map((department) => {
+                  return (
+                    <MenuItem key={department} value={department}>
+                      {getPrettyDepartmentName(department)}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+              <FormHelperText>{errors.department}</FormHelperText>
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={12} sm={6} className="employee-data">
+            <Typography variant="h5">Address</Typography>
+            <FormControl error={errors.street !== false} className="form-group">
+              <TextField
+                label="Street"
+                onChange={(e) => {
+                  setStreet(e.target.value);
+                }}
+                error={errors.street !== false}
+              />
+              <FormHelperText>{errors.street}</FormHelperText>
+            </FormControl>
+            <FormControl error={errors.city !== false} className="form-group">
+              <TextField
+                label="City"
+                onChange={(e) => {
+                  setCity(e.target.value);
+                }}
+                error={errors.city !== false}
+              />
+              <FormHelperText>{errors.city}</FormHelperText>
+            </FormControl>
+            <FormControl error={errors.state !== false} className="form-group">
+              <InputLabel id="select-state">State</InputLabel>
+              <Select
+                label="State"
+                autoWidth
+                value={state}
+                onChange={(e) => {
+                  setState(e.target.value);
+                }}
+                MenuProps={{
+                  anchorOrigin: {
+                    vertical: "bottom",
+                    horizontal: "left"
+                  },
+                  transformOrigin: {
+                    vertical: "top",
+                    horizontal: "left"
+                  },
+                  PaperProps: {
+                    style: {
+                      maxHeight: 300
+                    }
+                  }
+                }}
+              >
+                <MenuItem value=""></MenuItem>
+                {states.map((state) => {
+                  return (
+                    <MenuItem key={state.abbreviation} value={state.abbreviation}>
+                      {state.name}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+              <FormHelperText>{errors.state}</FormHelperText>
+            </FormControl>
+            <FormControl error={errors.zip !== false} className="form-group">
+              <TextField
+                label="Zip"
+                onChange={(e) => {
+                  setZip(e.target.value);
+                }}
+                error={errors.zip !== false}
+              />
+              <FormHelperText>{errors.zip}</FormHelperText>
+            </FormControl>
+          </Grid>
+        </Grid>
+
+        <Button variant="contained" type="submit" color="success">
+          Save
+        </Button>
+      </form>
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            New employee
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            Employee created !
+          </Typography>
+        </Box>
+      </Modal>
+    </>
   );
 }
 

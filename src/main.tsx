@@ -4,11 +4,15 @@ import { RouterProvider } from "react-router-dom";
 import { router } from "./routes/routes.tsx";
 import { Provider } from "react-redux";
 import { store } from "./app/store.ts";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <Provider store={store}>
-      <RouterProvider router={router} />
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <RouterProvider router={router} />
+      </LocalizationProvider>
     </Provider>
   </React.StrictMode>
 );
