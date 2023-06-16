@@ -18,7 +18,7 @@
     "@mui/material": "^5.13.1",
     "@mui/x-date-pickers": "^6.4.0",
     "dayjs": "^1.11.7",
-    "openclassrooms-npm-etienne-coyac": "^1.0.0",
+    "openclassrooms-npm-etienne-coyac": "^1.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",
